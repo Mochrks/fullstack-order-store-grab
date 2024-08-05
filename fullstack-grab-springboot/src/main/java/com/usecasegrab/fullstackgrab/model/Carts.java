@@ -23,7 +23,7 @@ public class Carts implements java.io.Serializable {
     @SequenceGenerator(name = "generator_carts_cart_id_seq", sequenceName = "carts_cart_id_seq", schema = "public", allocationSize = 1)
     @Column(name = "cart_id", unique = true, nullable = false)
     private int cartId;
-
+ 
     @ManyToOne
     @JoinColumn(name = "food_id")
     private Foods foods;
