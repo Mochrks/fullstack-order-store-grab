@@ -23,13 +23,13 @@ public class OrderController {
     }
 
     @PutMapping(Urls.UPDATE_ORDER)
-    public ResponseEntity<Object> updateOrder(@PathVariable(name = "orderId") int orderId) {
-        return orderService.updateOrder(orderId);
+    public ResponseEntity<Object> updateOrder() {
+        return orderService.updateOrder();
     }
 
     @GetMapping(Urls.GET_ORDER)
-    public ResponseEntity<Object> getOrders(@PathVariable(name = "orderId") int orderId) {
-        return orderService.getOrderById(orderId);
+    public ResponseEntity<Object> getOrders() {
+        return orderService.getOrder();
     }
 
 }

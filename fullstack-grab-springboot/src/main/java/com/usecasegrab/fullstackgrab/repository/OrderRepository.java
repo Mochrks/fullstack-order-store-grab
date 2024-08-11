@@ -12,6 +12,12 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Orders, Integer> {
     Optional<Orders> findById(int orderId);
 
+    @Query("SELECT o FROM Orders o ORDER BY o.orderId DESC")
+    Optional<Orders> findLastInsertedOrder();
+
+    @Query(value = "SELECT * FROM Orders o ORDER BY o.order_id DESC LIMIT 1", nativeQuery = true)
+    Optional<Orders> findFirstOrderByOrderIdDesc();
+
     @Query("SELECT o FROM Orders o WHERE o.paxIdGsi = :paxIdGsi AND o.state = 'ongoing'")
     List<Orders> findOngoingOrdersByPaxIdGsi(@Param("paxIdGsi") int paxIdGsi);
 

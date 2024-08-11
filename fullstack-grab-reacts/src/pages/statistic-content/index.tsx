@@ -16,6 +16,11 @@ import {
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PieChart from "@/components/demo/PieCharts";
+import {
+  fetchStatisticsData,
+  fetchOngoingOrders,
+  fetchHistoricalOrders,
+} from "../../service/apiService";
 
 const formatRupiah = (number) => {
   return new Intl.NumberFormat("id-ID", {
@@ -33,50 +38,42 @@ function StatisticContent() {
   const [selectedState, setSelectedState] = useState("");
 
   useEffect(() => {
-    const fetchStatisticsData = async () => {
+    const loadStatisticsData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/api/orders/statistics"
-        );
-        setStatisticsData(response.data.data);
+        const data = await fetchStatisticsData();
+        setStatisticsData(data);
       } catch (error) {
-        console.error("Error fetching statistics data:", error);
+        console.error("Error loading statistics data:", error);
       }
     };
 
-    fetchStatisticsData();
+    loadStatisticsData();
   }, []);
 
   useEffect(() => {
-    const fetchOngoingOrders = async () => {
+    const loadOngoingOrders = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/api/orders/ongoing/1"
-        );
-        setOngoingOrders(response.data.data);
+        const data = await fetchOngoingOrders(1);
+        setOngoingOrders(data);
       } catch (error) {
-        console.error("Error fetching ongoing orders data:", error);
+        console.error("Error loading ongoing orders data:", error);
       }
     };
 
-    fetchOngoingOrders();
+    loadOngoingOrders();
   }, []);
 
   useEffect(() => {
-    const fetchHistoricalOrders = async () => {
+    const loadHistoricalOrders = async () => {
       try {
-        let url = `http://localhost:8080/api/orders/historical?paxIdGsi=1`;
-        if (selectedState) {
-          url += `&state=${selectedState}`;
-        }
-        const response = await axios.get(url);
-        setHistoricalOrders(response.data.data.orders);
+        const data = await fetchHistoricalOrders(1, selectedState);
+        setHistoricalOrders(data);
       } catch (error) {
-        console.error("Error fetching historical orders data:", error);
+        console.error("Error loading historical orders data:", error);
       }
     };
 
-    fetchHistoricalOrders();
+    loadHistoricalOrders();
   }, [selectedState]);
 
   const handleStateChange = (event) => {

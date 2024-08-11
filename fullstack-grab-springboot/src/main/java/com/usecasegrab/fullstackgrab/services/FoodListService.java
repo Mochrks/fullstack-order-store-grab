@@ -168,7 +168,7 @@ public class FoodListService {
 
     // Optional<Carts> cartData = cartsRepository.findById(foodId);
     public ResponseEntity<Object> deleteCart(int foodId) {
-        HttpStatus status = HttpStatus.CREATED;
+        HttpStatus status = HttpStatus.OK;
         String message = messageUtils.generateSuccessDeleteCartMessage();
 
         Carts cartData = cartsRepository.findByFoodsFoodIdAndIsDeletedFalse(foodId);

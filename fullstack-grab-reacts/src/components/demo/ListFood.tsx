@@ -14,42 +14,48 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
+import {
+  fetchFoodLists,
+  addToCart as addToCartFromService,
+} from "../../service/apiService";
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
 export default function ListFood({ currentPage, itemsPerPage }) {
   const [foodLists, setFoodLists] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/foods")
-      .then((response) => {
-        setFoodLists(response.data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching food lists:", error);
-      });
+    const loadFoodLists = async () => {
+      try {
+        const data = await fetchFoodLists();
+        setFoodLists(data);
+      } catch (error) {
+        console.error("Error loading food lists:", error);
+      }
+    };
+
+    loadFoodLists();
   }, []);
 
+  const addToCart = async (foodId) => {
+    try {
+      await addToCartFromService(foodId);
+      toast.success("Item berhasil ditambahkan ke keranjang");
+    } catch (error) {
+      console.error("Error adding item to cart:", error);
+      if (error.response && error.response.status === 400) {
+        toast.error("Item sudah ada didalam keranjang");
+      }
+    }
+  };
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, foodLists.length);
   const paginatedFoodLists = foodLists.slice(startIndex, endIndex);
-
-  const addToCart = (foodId) => {
-    axios
-      .post("http://localhost:8080/api/foods/cart/", { foodId })
-      .then((response) => {
-        console.log(
-          "Makanan dengan ID " + foodId + " ditambahkan ke keranjang:"
-        );
-        console.log("Response:", response.data);
-        toast.success("Item berhasil ditambahkan ke keranjang");
-      })
-      .catch((error) => {
-        console.error("Error adding item to cart:", error);
-        if (error.response && error.response.status === 400) {
-          toast.error("Item sudah ada didalam keranjang");
-        }
-      });
-  };
 
   const viewFoodDetails = () => {
     console.log("Detail makanan dengan ID ");
@@ -63,7 +69,7 @@ export default function ListFood({ currentPage, itemsPerPage }) {
             Rekomendasi untuk anda
           </h3>
 
-          <div className="mt-6 grid grid-cols-1 gap-x-7 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+          <div className=" mt-6 grid grid-cols-1 gap-x-7 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
             {paginatedFoodLists.map((food) => (
               <div key={food.foodId} className="group relative">
                 <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-50">
@@ -84,7 +90,7 @@ export default function ListFood({ currentPage, itemsPerPage }) {
                     </p>
                   </div>
                   <p className="text-md font-medium text-gray-900">
-                    {food.price}
+                    {formatCurrency(food.price)}
                   </p>
                 </div>
                 <div className="pt-4 flex justify-center gap-2">
@@ -121,7 +127,7 @@ export default function ListFood({ currentPage, itemsPerPage }) {
                               </div>
                             </div>
                             <p className="text-2xl font-medium text-gray-900">
-                              {food.price}
+                              {formatCurrency(food.price)}
                             </p>
                           </div>
                           <div className="pt-10">

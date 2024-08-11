@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class OrderService {
@@ -58,13 +59,6 @@ public class OrderService {
             orderRepository.save(order);
             OrderKafkaProducer.sendOrder(order);
 
-            // Set isDeleted true untuk semua item di keranjang
-            // List<Carts> cartItems = cartsRepository.findAllByIsDeletedFalse();
-            // for (Carts cart : cartItems) {
-            // cart.setIsDeleted(true);
-            // cartsRepository.save(cart);
-            // }
-
             return ResponseEntity.status(status).body(ResponseBodyDTO.builder()
                     .message(message)
                     .statusCode(status.value())
@@ -82,10 +76,12 @@ public class OrderService {
         }
     }
 
-    public ResponseEntity<Object> updateOrder(int orderId) {
+    public ResponseEntity<Object> updateOrder() {
         HttpStatus status = HttpStatus.OK;
         String message = messageUtils.generateSuccessUpdateOrderMessage();
+        Optional<Orders> lastInsertedOrder = orderRepository.findFirstOrderByOrderIdDesc();
 
+        int orderId = lastInsertedOrder.get().getOrderId();
         try {
 
             Optional<Orders> orderOptional = orderRepository.findById(orderId);
@@ -97,6 +93,13 @@ public class OrderService {
 
                 // Mengirimkan order yang telah diupdate ke Kafka
                 OrderKafkaProducer.updateOrderStatus(order);
+
+                // Set isDeleted true untuk semua item di keranjang
+                List<Carts> cartItems = cartsRepository.findAllByIsDeletedFalse();
+                for (Carts cart : cartItems) {
+                    cart.setIsDeleted(true);
+                    cartsRepository.save(cart);
+                }
 
                 return ResponseEntity.status(status).body(ResponseBodyDTO.builder()
                         .message(message)
@@ -124,13 +127,12 @@ public class OrderService {
         }
     }
 
-    // get statistics
-    // =============================================================================
-
-    public ResponseEntity<Object> getOrderById(int orderId) {
+    public ResponseEntity<Object> getOrder() {
         HttpStatus status = HttpStatus.OK;
         String message = messageUtils.generateSuccessGetOrderIdMessage();
+        Optional<Orders> lastInsertedOrder = orderRepository.findFirstOrderByOrderIdDesc();
 
+        int orderId = lastInsertedOrder.get().getOrderId();
         try {
             Optional<Orders> orderOptional = orderRepository.findById(orderId);
             Map<String, Object> responseData = new HashMap<>();
@@ -182,6 +184,9 @@ public class OrderService {
                     .build());
         }
     }
+
+    // get statistics
+    // =============================================================================
 
     public ResponseEntity<Object> getOngoingOrder(int paxIdGsi) {
         HttpStatus status = HttpStatus.OK;

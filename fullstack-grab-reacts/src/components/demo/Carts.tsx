@@ -9,55 +9,74 @@ import { Button } from "@/components/ui/button";
 import DialogFailed from "./DialogFailed";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import {
+  fetchCartLists,
+  handleCheckout as handleCheckoutFromService,
+  removeFromCart as removeFromCartFromService,
+} from "../../service/apiService";
 export default function Carts() {
   const [open, setOpen] = useState(true);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [cartLists, setCartLists] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/foods/cart/data")
-      .then((response) => {
-        setCartLists(response.data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching cart lists:", error);
-      });
+    const loadCartLists = async () => {
+      try {
+        const data = await fetchCartLists();
+        setCartLists(data);
+      } catch (error) {
+        console.error("Error loading cart lists:", error);
+      }
+    };
+
+    loadCartLists();
   }, []);
 
-  const handleCheckout = () => {
-    axios
-      .post("http://localhost:8080/api/orders/create", {})
-      .then((response) => {
-        setTimeout(() => {
-          setShowSuccessDialog(true);
-        }, 1000);
-      })
-      .catch((error) => {
-        console.error("Error creating order:", error);
-      });
+  const handleCheckout = async () => {
+    try {
+      await handleCheckoutFromService();
+      setTimeout(() => {
+        setShowSuccessDialog(true);
+      }, 1000);
+    } catch (error) {
+      console.error("Error during checkout:", error);
+    }
   };
 
-  const removeFromCart = (foodId) => {
-    axios
-      .delete(`http://localhost:8080/api/foods/cart/${foodId}/`)
-      .then((response) => {
-        console.log("Item with ID " + foodId + " removed from cart:");
-        console.log("Response:", response.data);
-        toast.success("Item berhasil dihapus dari keranjang");
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.error("Error removing item from cart:", error);
-      });
+  // const removeFromCart = (foodId) => {
+  //   axios
+  //     .delete(`http://localhost:8080/api/foods/cart/${foodId}`)
+  //     .then((response) => {
+  //       toast.success("Item berhasil dihapus dari keranjang");
+  //       window.location.reload();
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error removing item from cart:", error);
+  //     });
+  // };
+  const removeFromCart = async (foodId) => {
+    try {
+      await removeFromCartFromService(foodId);
+      toast.success("Item berhasil dihapus dari keranjang");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error removing item from cart:", error);
+    }
   };
 
-  // ==========================================================
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
+    }).format(amount);
+  };
+
+  const formatCurrencyRp = (amount) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(amount);
   };
 
@@ -152,7 +171,9 @@ export default function Carts() {
                                             {carts.foodName}
                                           </a>
                                         </h3>
-                                        <p className="ml-4">{carts.price}</p>
+                                        <p className="ml-4">
+                                          {formatCurrencyRp(carts.price)}
+                                        </p>
                                       </div>
                                       <p className="mt-1 text-sm text-gray-500">
                                         {carts.location}
@@ -185,22 +206,22 @@ export default function Carts() {
                     <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                       <div className="flex justify-between text-base font-medium text-gray-900">
                         <p>Subtotal</p>
-                        <p>Rp. {formatCurrency(subtotal)}</p>
+                        <p>{formatCurrency(subtotal)}</p>
                       </div>
                       <div className="flex justify-between text-base font-medium text-gray-500">
                         <p>Ongkos Kirim</p>
-                        <p>Rp. {formatCurrency(ongkir)}</p>
+                        <p>{formatCurrency(ongkir)}</p>
                       </div>
                       <div className="flex justify-between text-base font-medium text-gray-500">
                         <p>PPN(10%)</p>
-                        <p>Rp. {formatCurrency(subtotal * ppn)}</p>
+                        <p>{formatCurrency(subtotal * ppn)}</p>
                       </div>
                       <br />
                       <hr />
                       <br />
                       <div className="flex justify-between text-base font-medium text-gray-900">
                         <p>Total Biaya</p>
-                        <p>Rp. {formatCurrency(totalBiaya)}</p>
+                        <p>{formatCurrency(totalBiaya)}</p>
                       </div>
 
                       <p className="mt-0.5 text-sm text-gray-500">

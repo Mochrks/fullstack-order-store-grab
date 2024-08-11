@@ -9,11 +9,9 @@ import Carts from "@/components/demo/Carts";
 import Pages from "@/components/demo/Pages";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import foodLists from "@/apis/listFoodApis";
-
 import { Badge } from "@/components/ui/badge";
 import {
   Drawer,
@@ -28,6 +26,10 @@ import {
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {
+  fetchOrderData as fetchOrderDataFromService,
+  completeOrder as completeOrderFromService,
+} from "../../service/apiService";
 
 function FoodContent() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -35,16 +37,15 @@ function FoodContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  // =================================================================
   // get order data
   const [orderData, setOrderData] = useState(null);
   useEffect(() => {
     const fetchOrderData = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/orders/74");
+        const data = await fetchOrderDataFromService();
         // Log respons ke konsol
-        console.log(response.data);
-        setOrderData(response.data);
+        console.log(data);
+        setOrderData(data);
       } catch (error) {
         console.error("Error fetching order data:", error);
       }
@@ -56,7 +57,7 @@ function FoodContent() {
   // update orders done
   const completeOrder = async () => {
     try {
-      await axios.put(`http://localhost:8080/api/orders/updated/74`);
+      await completeOrderFromService();
       toast.success("Pesanan selesai");
       console.log("Pesanan selesai berhasil diperbarui");
       setTimeout(() => {
@@ -67,7 +68,6 @@ function FoodContent() {
     }
   };
 
-  // =================================================================
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
