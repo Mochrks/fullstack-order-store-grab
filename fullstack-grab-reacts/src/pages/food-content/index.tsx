@@ -159,8 +159,8 @@ function FoodContent() {
                   </DrawerHeader>
                   <DrawerFooter>
                     <Button>Submit</Button>
-                    <DrawerClose>
-                      <Button variant="outline">Cancel</Button>
+                    <DrawerClose >
+                      <Button variant="outline" className="w-full">Cancel</Button>
                     </DrawerClose>
                   </DrawerFooter>
                 </DrawerContent>
@@ -253,7 +253,7 @@ function FoodContent() {
                                     <Badge
                                       variant={
                                         orderData &&
-                                        orderData.data.state === "ongoing"
+                                          orderData.data.state === "ongoing"
                                           ? "destructive"
                                           : "default"
                                       }
@@ -272,7 +272,7 @@ function FoodContent() {
                                       <Button
                                         variant={
                                           orderData &&
-                                          orderData.data.state === "ongoing"
+                                            orderData.data.state === "ongoing"
                                             ? "destructive"
                                             : "default"
                                         }
@@ -280,7 +280,7 @@ function FoodContent() {
                                       >
                                         <ClipboardDocumentListIcon className="h-6 w-6" />
                                         {orderData &&
-                                        orderData.data.state === "ongoing"
+                                          orderData.data.state === "ongoing"
                                           ? "Pesanan selesai"
                                           : "Beli lagi"}
                                       </Button>
