@@ -115,6 +115,8 @@ function StatisticContent() {
 
   return (
     <>
+
+      {/* banner old */}
       {isMobile ? (
         <AspectRatio ratio={16 / 5}>
           <img
@@ -135,6 +137,31 @@ function StatisticContent() {
         </div>
       )}
 
+      {/* nav-profiles */}
+
+
+      <Alert className="relative z-10 flex items-center justify-between my-5 shadow-lg">
+        <div className="flex items-center">
+          <Avatar className="mr-4">
+            <AvatarImage
+              src="https://github.com/shadcn.png"
+              alt="@shadcn"
+            />
+            <AvatarFallback>JD</AvatarFallback>
+          </Avatar>
+          <div>
+            <AlertTitle>Selamat datang !! Admin</AlertTitle>
+            <AlertDescription>
+              Mari lihat statistik pesanan!!
+            </AlertDescription>
+          </div>
+        </div>
+        <div className="flex space-x-4"></div>
+      </Alert>
+
+
+
+      {/* title data statistic */}
       <div className="pt-5">
         <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
           <div
@@ -175,6 +202,8 @@ function StatisticContent() {
         </div>
       </div>
 
+
+      {/* content */}
       <div className="pt-10 pb-20">
         <Tabs defaultValue="orders" className="w-[ 1400px]">
           <TabsList className="grid w-full grid-cols-3">
@@ -337,52 +366,9 @@ function StatisticContent() {
         </Tabs>
       </div>
 
-      {isMobile ? (
-        <div className="fixed bottom-0 left-0 right-0 mx-auto max-w-[1290px] my-2">
-          <div className="absolute inset-0 bg-white "></div>
-          <Alert className="relative z-10 flex items-center justify-between">
-            <div className="flex items-center">
-              <Avatar className="mr-4">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-              <div>
-                <AlertTitle>Selamat datang !! Admin </AlertTitle>
-                <AlertDescription>
-                  Kami senang Anda bergabung dengan kami. Mari lihat statistik
-                  pesanan!
-                </AlertDescription>
-              </div>
-            </div>
-          </Alert>
-        </div>
-      ) : (
-        <div className="fixed bottom-0 left-0 right-0 mx-auto max-w-[1290px] px-20 pb-4">
-          <div className="absolute inset-0 bg-white "></div>
-          <Alert className="relative z-10 flex items-center justify-between">
-            <div className="flex items-center">
-              <Avatar className="mr-4">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-              <div>
-                <AlertTitle>Selamat datang !! Admin</AlertTitle>
-                <AlertDescription>
-                  Kami senang Anda bergabung dengan kami. Mari lihat statistik
-                  pesanan!
-                </AlertDescription>
-              </div>
-            </div>
-            <div className="flex space-x-4"></div>
-          </Alert>
-        </div>
-      )}
+
+
+
     </>
   );
 }

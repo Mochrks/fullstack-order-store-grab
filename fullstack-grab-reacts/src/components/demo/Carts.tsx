@@ -14,10 +14,14 @@ import {
   handleCheckout as handleCheckoutFromService,
   removeFromCart as removeFromCartFromService,
 } from "../../service/apiService";
+import { UtensilsCrossed } from 'lucide-react';
+
+
 export default function Carts() {
   const [open, setOpen] = useState(true);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [cartLists, setCartLists] = useState([]);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
   useEffect(() => {
     const loadCartLists = async () => {
@@ -64,6 +68,7 @@ export default function Carts() {
     }
   };
 
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -94,6 +99,13 @@ export default function Carts() {
 
   const totalBiaya = subtotal + ongkir + subtotal * ppn;
 
+  const paymentMethods = [
+    { name: 'BNI', logo: '../src/assets/bni.png' },
+    { name: 'Mandiri', logo: '../src/assets/mandiri.png' },
+    { name: 'BCA', logo: '../src/assets/bca.png' },
+    { name: 'BRI', logo: '../src/assets/bri.png' },
+  ];
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={setOpen}>
@@ -122,31 +134,32 @@ export default function Carts() {
                 leaveTo="translate-x-full"
               >
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-                  <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
-                    <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-                      <div className="flex items-start justify-between">
+                  <div className="flex h-full flex-col  bg-white shadow-xl">
+                    <div className="flex items-start justify-between px-5 py-5">
+                      <div className="flex items-start justify-center gap-2 ">
+                        <UtensilsCrossed className="h-6 w-6 mt-1" />
                         <Dialog.Title className="text-lg font-medium text-gray-900">
                           Keranjang saya
                         </Dialog.Title>
-
-                        <div className="ml-3 flex h-7 items-center">
-                          <button
-                            type="button"
-                            className="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
-                            onClick={() => setOpen(false)}
-                          >
-                            <span className="absolute -inset-0.5" />
-                            <span className="sr-only">Close panel</span>
-                            <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                          </button>
-                        </div>
                       </div>
 
-                      <div className="mt-8">
-                        <hr className="border-t-2 border-gray-200" />
+                      <div className="ml-3 flex h-7 items-center">
+                        <button
+                          type="button"
+                          className="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
+                          onClick={() => setOpen(false)}
+                        >
+                          <span className="absolute -inset-0.5" />
+                          <span className="sr-only">Close panel</span>
+                          <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                        </button>
+                      </div>
+                    </div>
 
+                    <div className="flex-1 overflow-y-auto px-4 sm:px-6">
+                      <div className="mt-2">
                         {cartLists.length === 0 ? (
-                          <p className="pt-5">Keranjang belanja Anda kosong</p>
+                          <p className="pt-5">Keranjang Anda kosong</p>
                         ) : (
                           <div className="flow-root pt-5">
                             <ul
@@ -203,7 +216,9 @@ export default function Carts() {
                       </div>
                     </div>
 
-                    <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+                    {cartLists.length === 0 ? (
+                      <></>
+                    ) : (<div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                       <div className="flex justify-between text-base font-medium text-gray-900">
                         <p>Subtotal</p>
                         <p>{formatCurrency(subtotal)}</p>
@@ -224,10 +239,35 @@ export default function Carts() {
                         <p>{formatCurrency(totalBiaya)}</p>
                       </div>
 
-                      <p className="mt-0.5 text-sm text-gray-500">
+                      <p className="mt-0.5 text-sm text-gray-500 py-2">
                         Pembayaran total biaya termasuk biaya PPN dan ongkos
                         kirim.
                       </p>
+                      <hr />
+                      {/* payment method */}
+                      <div className="mt-6">
+                        <h3 className="text-lg font-medium text-gray-900 mb-4">Pilih Metode Pembayaran</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          {paymentMethods.map((method) => (
+                            <button
+                              key={method.name}
+                              className={`flex items-center justify-center p-4 border rounded-lg ${selectedPaymentMethod === method.name
+                                ? 'border-blue-600 bg-blue-50'
+                                : 'border-gray-300'
+                                }`}
+                              onClick={() => setSelectedPaymentMethod(method.name)}
+                            >
+                              <img
+                                src={method.logo}
+                                alt={`${method.name} logo`}
+                                width={70}
+                                height={40}
+                                className="mr-2"
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                       <div className="mt-6">
                         <Button
                           variant="default"
@@ -237,7 +277,7 @@ export default function Carts() {
                           Checkout
                         </Button>
                       </div>
-                    </div>
+                    </div>)}
 
                     {showSuccessDialog && <DialogSuccess />}
                   </div>
@@ -246,6 +286,7 @@ export default function Carts() {
             </div>
           </div>
         </div>
+
       </Dialog>
     </Transition.Root>
   );

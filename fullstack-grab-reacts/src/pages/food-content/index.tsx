@@ -30,6 +30,18 @@ import {
   fetchOrderData as fetchOrderDataFromService,
   completeOrder as completeOrderFromService,
 } from "../../service/apiService";
+import Slider from 'react-slick'
+import { cn } from '@/lib/utils'
+
+
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
+
+const images = [
+  '../src/assets/bgsteak.jpg',
+  '../src/assets/bgnasi.jpg',
+  '../src/assets/bgsteak2.jpg',
+]
 
 function FoodContent() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -86,9 +98,30 @@ function FoodContent() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+    }).format(amount);
+  };
+
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    fade: true,
+    cssEase: 'linear'
+  }
+
   return (
     <>
-      {isMobile ? (
+      {/* banner */}
+      {/* {isMobile ? (
         <AspectRatio ratio={16 / 5}>
           <img
             src="../src/assets/gambar.jpg"
@@ -98,7 +131,7 @@ function FoodContent() {
         </AspectRatio>
       ) : (
         <div className="bottom-0 left-0 right-0 mx-auto max-w-[1290px]  px-4 ">
-          <AspectRatio ratio={16 / 1.7}>
+          <AspectRatio ratio={16 / 2}>
             <img
               src="../src/assets/gambar.jpg"
               alt="Banner Food Images"
@@ -106,9 +139,30 @@ function FoodContent() {
             />
           </AspectRatio>
         </div>
-      )}
+      )} */}
 
-      <div>
+      {/* banner update  with corousel*/}
+      <div className={cn(
+        "mx-auto max-w-[1290px] px-4",
+        isMobile ? "w-full" : "bottom-0 left-0 right-0"
+      )}>
+        <Slider {...settings}>
+          {images.map((image, index) => (
+            <div key={index}>
+              <AspectRatio ratio={isMobile ? 16 / 5 : 16 / 2}>
+                <img
+                  src={image}
+                  alt={`Banner Food Image ${index + 1}`}
+                  className="object-cover w-full h-full rounded-md transition-opacity duration-500"
+                />
+              </AspectRatio>
+            </div>
+          ))}
+        </Slider>
+      </div>
+
+      {/* list-food */}
+      <div className="bg-white">
         <ListFood currentPage={currentPage} itemsPerPage={itemsPerPage} />
       </div>
 
@@ -121,97 +175,49 @@ function FoodContent() {
         />
       </div>
 
+      {/* carts */}
       {isCartOpen && <Carts />}
 
-      {isMobile ? (
-        <div className="fixed bottom-0 left-0 right-0 mx-auto max-w-[1290px]">
-          <div className="absolute inset-0 bg-white "></div>
-          <Alert className="relative z-10 flex items-center justify-between">
-            <div className="flex items-center">
-              <Avatar className="mr-4">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-              <div>
-                <AlertTitle>Selamat datang !! John Doe</AlertTitle>
-                <AlertDescription>
-                  Kami senang Anda bergabung dengan kami. Mari mulai pesan
-                  makanan favorit Anda sekarang juga!
-                </AlertDescription>
-              </div>
-            </div>
-            <div className="flex space-x-4">
-              <Drawer>
-                <DrawerTrigger>
-                  <Button variant="destructive">
-                    <ClipboardDocumentListIcon className="h-6 w-6" />
-                  </Button>
-                </DrawerTrigger>
-                <DrawerContent>
-                  <DrawerHeader>
-                    <DrawerTitle>Pesanan anda</DrawerTitle>
-                    <DrawerDescription>
-                      <AspectRatio ratio={16 / 14}></AspectRatio>
-                    </DrawerDescription>
-                  </DrawerHeader>
-                  <DrawerFooter>
-                    <Button>Submit</Button>
-                    <DrawerClose >
-                      <Button variant="outline" className="w-full">Cancel</Button>
-                    </DrawerClose>
-                  </DrawerFooter>
-                </DrawerContent>
-              </Drawer>
 
-              <Button variant="default" onClick={toggleCart}>
-                <ShoppingCartIcon className="h-6 w-6" />
-              </Button>
+      {/* nav profiles */}
+      <div className="fixed bottom-0 left-0 right-0 mx-auto max-w-full lg:max-w-[1200px] pb-4 px-5 bg-white p-4">
+        <div className="absolute inset-0 "></div>
+        <Alert className="flex items-center justify-between z-10 border gap-4 shadow-lg">
+          <div className="flex items-center">
+            <Avatar className="mr-4">
+              <AvatarImage
+                src="https://github.com/shadcn.png"
+                alt="@shadcn"
+              />
+              <AvatarFallback>JD</AvatarFallback>
+            </Avatar>
+            <div>
+              <AlertTitle>Selamat datang !! John Doe</AlertTitle>
+              <AlertDescription>
+                Mari mulai pesan makanan favorit Anda sekarang juga!
+              </AlertDescription>
             </div>
-          </Alert>
-        </div>
-      ) : (
-        <div className="fixed bottom-0 left-0 right-0 mx-auto max-w-[1290px] px-20 pb-4">
-          <div className="absolute inset-0 bg-white "></div>
-          <Alert className="relative z-10 flex items-center justify-between">
-            <div className="flex items-center">
-              <Avatar className="mr-4">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-              <div>
-                <AlertTitle>Selamat datang !! John Doe</AlertTitle>
-                <AlertDescription>
-                  Kami senang Anda bergabung dengan kami. Mari mulai pesan
-                  makanan favorit Anda sekarang juga!
-                </AlertDescription>
-              </div>
-            </div>
-            <div className="flex space-x-4">
-              <Drawer>
-                <DrawerTrigger>
-                  <Button variant="destructive">
+          </div>
+          <div className="flex space-x-4 ">
+            <Drawer>
+              <DrawerTrigger>
+                <Button variant="destructive">
+                  <ClipboardDocumentListIcon className="h-6 w-6" />
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <DrawerHeader>
+                  <div className="flex space-x-4">
                     <ClipboardDocumentListIcon className="h-6 w-6" />
-                  </Button>
-                </DrawerTrigger>
-                <DrawerContent>
-                  <DrawerHeader>
-                    <div className="flex space-x-4">
-                      <ClipboardDocumentListIcon className="h-6 w-6" />
-                      <DrawerTitle>Pesanan anda</DrawerTitle>
-                    </div>
-                    {/* <DrawerDescription></DrawerDescription> */}
-                  </DrawerHeader>
-                  <div>
-                    <AspectRatio ratio={16 / 5}>
-                      <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
-                        <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-                          <hr className="border-t-2 border-gray-200" />
+                    <DrawerTitle>Pesanan anda</DrawerTitle>
+                  </div>
+                </DrawerHeader>
+                <div className="border bg-slate-400">
+                  <AspectRatio ratio={16 / 8}>
+                    <div className="flex h-full flex-col overflow-y-scroll bg-white ">
+                      <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+                        {orderData &&
+                          orderData.data.state === "ongoing" ? (
                           <div className="flow-root pt-10">
                             <ul
                               role="list"
@@ -226,7 +232,7 @@ function FoodContent() {
                                   />
                                 </div>
 
-                                <div className="ml-4 flex flex-1 flex-col">
+                                <div className="ml-4 flex flex-1 flex-col ">
                                   <div>
                                     <div className="flex justify-between text-base font-medium text-gray-900">
                                       <h3>
@@ -239,8 +245,7 @@ function FoodContent() {
                                       </h3>
                                       <p className="ml-4">
                                         Total pesanan :{" "}
-                                        {orderData &&
-                                          orderData.data.total_price}
+                                        {formatCurrency(orderData && orderData.data.total_price)}
                                       </p>
                                     </div>
                                     <p className="mt-1 text-sm text-gray-500">
@@ -273,10 +278,11 @@ function FoodContent() {
                                         variant={
                                           orderData &&
                                             orderData.data.state === "ongoing"
-                                            ? "destructive"
-                                            : "default"
+                                            ? "default"
+                                            : "destructive"
                                         }
                                         onClick={completeOrder}
+
                                       >
                                         <ClipboardDocumentListIcon className="h-6 w-6" />
                                         {orderData &&
@@ -289,26 +295,26 @@ function FoodContent() {
                                 </div>
                               </li>
                             </ul>
-                          </div>
-                        </div>
+                          </div>) : <><div className="text-center" ><p>Tidak ada pesanan saat ini</p></div></>}
                       </div>
-                    </AspectRatio>
-                  </div>
-                  <DrawerFooter>
-                    <DrawerClose>
-                      <Button variant="outline">Tutup</Button>
-                    </DrawerClose>
-                  </DrawerFooter>
-                </DrawerContent>
-              </Drawer>
+                    </div>
+                  </AspectRatio>
+                </div>
+                <DrawerFooter>
+                  <DrawerClose>
+                    <Button variant="outline" className="w-[140px] border shadow-lg">Tutup</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
 
-              <Button variant="default" onClick={toggleCart}>
-                <ShoppingCartIcon className="h-6 w-6" />
-              </Button>
-            </div>
-          </Alert>
-        </div>
-      )}
+            <Button variant="default" onClick={toggleCart}>
+              <ShoppingCartIcon className="h-6 w-6" />
+            </Button>
+          </div >
+        </Alert >
+      </div >
+
     </>
   );
 }
