@@ -22,7 +22,7 @@ public class FoodController {
 
     @GetMapping(Urls.GET_ALL_DATA_FOOD)
     public ResponseEntity<Object> getAllFoods(
-            @PageableDefault(page = 0, size = 8, sort = "foodName", direction = Direction.ASC) Pageable page,
+            @PageableDefault(page = 0, size = 100, sort = "foodName", direction = Direction.ASC) Pageable page,
             @ModelAttribute FoodFilterRequestDTO foodFiltersDTO) {
         return foodListService.getAllFoods(page, foodFiltersDTO);
     }
