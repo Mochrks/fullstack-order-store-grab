@@ -57,7 +57,7 @@ public class OrderService {
                     .build();
 
             orderRepository.save(order);
-            OrderKafkaProducer.sendOrder(order);
+            // OrderKafkaProducer.sendOrder(order);
 
             return ResponseEntity.status(status).body(ResponseBodyDTO.builder()
                     .message(message)

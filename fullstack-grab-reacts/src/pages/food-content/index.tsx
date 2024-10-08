@@ -51,20 +51,21 @@ function FoodContent() {
 
   // get order data
   const [orderData, setOrderData] = useState(null);
-  useEffect(() => {
-    const fetchOrderData = async () => {
-      try {
-        const data = await fetchOrderDataFromService();
-        // Log respons ke konsol
-        console.log(data);
-        setOrderData(data);
-      } catch (error) {
-        console.error("Error fetching order data:", error);
-      }
-    };
 
+  useEffect(() => {
     fetchOrderData();
   }, []);
+
+  const fetchOrderData = async () => {
+    try {
+      const data = await fetchOrderDataFromService();
+      // Log respons ke konsol
+      console.log(data);
+      setOrderData(data);
+    } catch (error) {
+      console.error("Error fetching order data:", error);
+    }
+  };
 
   // update orders done
   const completeOrder = async () => {

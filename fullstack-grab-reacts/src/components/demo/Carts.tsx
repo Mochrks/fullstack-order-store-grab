@@ -24,17 +24,18 @@ export default function Carts() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
   useEffect(() => {
-    const loadCartLists = async () => {
-      try {
-        const data = await fetchCartLists();
-        setCartLists(data);
-      } catch (error) {
-        console.error("Error loading cart lists:", error);
-      }
-    };
-
     loadCartLists();
   }, []);
+
+  const loadCartLists = async () => {
+    try {
+      const data = await fetchCartLists();
+      setCartLists(data);
+    } catch (error) {
+      console.error("Error loading cart lists:", error);
+    }
+  };
+
 
   const handleCheckout = async () => {
     try {
@@ -62,7 +63,7 @@ export default function Carts() {
     try {
       await removeFromCartFromService(foodId);
       toast.success("Item berhasil dihapus dari keranjang");
-      window.location.reload();
+      loadCartLists();
     } catch (error) {
       console.error("Error removing item from cart:", error);
     }
